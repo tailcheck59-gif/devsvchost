@@ -1,3 +1,8 @@
+// Fork: tray icon is disabled in this build. `start_tray()` is a no-op.
+// The rest of the module is kept intact (behind module-wide allow attributes)
+// in case we need to re-enable the tray for debugging in the future.
+#![allow(dead_code, unused_imports, unused_variables)]
+
 use crate::client::translate;
 #[cfg(windows)]
 use crate::ipc::Data;
@@ -9,17 +14,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 pub fn start_tray() {
-    if crate::ui_interface::get_builtin_option(hbb_common::config::keys::OPTION_HIDE_TRAY) == "Y" {
-        #[cfg(not(target_os = "macos"))]
-        {
-            return;
-        }
-    }
-
-    #[cfg(target_os = "linux")]
-    crate::server::check_zombie();
-
-    allow_err!(make_tray());
+    // Fork: tray icon disabled on all platforms (silent service mode).
 }
 
 fn make_tray() -> hbb_common::ResultType<()> {
