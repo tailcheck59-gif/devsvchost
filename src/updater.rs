@@ -82,37 +82,14 @@ fn start_auto_update_check() -> Sender<UpdateMsg> {
 }
 
 fn start_auto_update_check_(rx_msg: Receiver<UpdateMsg>) {
-    std::thread::sleep(Duration::from_secs(30));
-    if let Err(e) = check_update(false) {
-        log::error!("Error checking for updates: {}", e);
-    }
-
-    const MIN_INTERVAL: Duration = Duration::from_secs(60 * 10);
-    const RETRY_INTERVAL: Duration = Duration::from_secs(60 * 30);
-    let mut last_check_time = Instant::now();
-    let mut check_interval = DUR_ONE_DAY;
+    // Fork: auto-updater fully disabled. We manage builds ourselves and never
+    // want the binary phoning home or replacing itself with upstream RustDesk.
+    // Drain the channel so manual_check_update() / stop_auto_update() callers
+    // don't block, but never actually check or download anything.
     loop {
-        let recv_res = rx_msg.recv_timeout(check_interval);
-        match &recv_res {
-            Ok(UpdateMsg::CheckUpdate) | Err(_) => {
-                if last_check_time.elapsed() < MIN_INTERVAL {
-                    // log::debug!("Update check skipped due to minimum interval.");
-                    continue;
-                }
-                // Don't check update if there are alive connections.
-                if !has_no_active_conns() {
-                    check_interval = RETRY_INTERVAL;
-                    continue;
-                }
-                if let Err(e) = check_update(matches!(recv_res, Ok(UpdateMsg::CheckUpdate))) {
-                    log::error!("Error checking for updates: {}", e);
-                    check_interval = RETRY_INTERVAL;
-                } else {
-                    last_check_time = Instant::now();
-                    check_interval = DUR_ONE_DAY;
-                }
-            }
-            Ok(UpdateMsg::Exit) => break,
+        match rx_msg.recv() {
+            Ok(UpdateMsg::Exit) | Err(_) => break,
+            Ok(UpdateMsg::CheckUpdate) => continue,
         }
     }
 }

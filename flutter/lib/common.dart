@@ -3690,6 +3690,10 @@ Color? disabledTextColor(BuildContext context, bool enabled) {
 }
 
 Widget loadPowered(BuildContext context) {
+  // Fork: always hide the "powered by" badge.
+  return SizedBox.shrink();
+  // Original behavior retained as dead code for reference:
+  // ignore: dead_code
   if (bind.mainGetBuildinOption(key: "hide-powered-by-me") == 'Y') {
     return SizedBox.shrink();
   }

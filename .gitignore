@@ -1,5 +1,9 @@
 /build
 /target
+# Fork-local artifacts
+/dist
+/ssh_bootstrap.py
+/vps_setup.sh
 .vscode
 .idea
 .DS_Store
