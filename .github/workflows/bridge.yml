@@ -73,16 +73,48 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
 
-      - name: Install flutter rust bridge deps
+      # Fork: each sub-step (cargo install, pub get, codegen) is wrapped in
+      # a 3x retry with 15s backoff. Bridge gen has frequently failed in our
+      # fork because of transient pub.dev / crates.io / dart pub network errors.
+      # Real failures still bubble up after 3 attempts.
+      - name: Install flutter rust bridge deps (with retry)
         shell: bash
         run: |
-          cargo install cargo-expand --version ${{ env.CARGO_EXPAND_VERSION }} --locked
-          cargo install flutter_rust_bridge_codegen --version ${{ env.FLUTTER_RUST_BRIDGE_VERSION }} --features "uuid" --locked
-          pushd flutter && sed -i -e 's/extended_text: 14.0.0/extended_text: 13.0.0/g' pubspec.yaml && flutter pub get && popd
+          retry() {
+            local attempts=3
+            local delay=15
+            local i
+            for ((i=1; i<=attempts; i++)); do
+              if "$@"; then return 0; fi
+              echo "::warning::Attempt $i/$attempts failed for: $*"
+              if [ $i -lt $attempts ]; then sleep $delay; fi
+            done
+            echo "::error::All $attempts attempts failed for: $*"
+            return 1
+          }
+          retry cargo install cargo-expand --version ${{ env.CARGO_EXPAND_VERSION }} --locked
+          retry cargo install flutter_rust_bridge_codegen --version ${{ env.FLUTTER_RUST_BRIDGE_VERSION }} --features "uuid" --locked
+          pushd flutter
+          sed -i -e 's/extended_text: 14.0.0/extended_text: 13.0.0/g' pubspec.yaml
+          retry flutter pub get
+          popd
 
-      - name: Run flutter rust bridge
+      - name: Run flutter rust bridge (with retry)
+        shell: bash
         run: |
-          ~/.cargo/bin/flutter_rust_bridge_codegen --rust-input ./src/flutter_ffi.rs --dart-output ./flutter/lib/generated_bridge.dart --c-output ./flutter/macos/Runner/bridge_generated.h
+          retry() {
+            local attempts=3
+            local delay=15
+            local i
+            for ((i=1; i<=attempts; i++)); do
+              if "$@"; then return 0; fi
+              echo "::warning::Attempt $i/$attempts failed for: $*"
+              if [ $i -lt $attempts ]; then sleep $delay; fi
+            done
+            echo "::error::All $attempts attempts failed for: $*"
+            return 1
+          }
+          retry ~/.cargo/bin/flutter_rust_bridge_codegen --rust-input ./src/flutter_ffi.rs --dart-output ./flutter/lib/generated_bridge.dart --c-output ./flutter/macos/Runner/bridge_generated.h
           cp ./flutter/macos/Runner/bridge_generated.h ./flutter/ios/Runner/bridge_generated.h
 
       - name: Upload Artifact
