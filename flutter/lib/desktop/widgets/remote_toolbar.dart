@@ -3,15 +3,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hbb/common/widgets/audio_input.dart';
-import 'package:flutter_hbb/common/widgets/dialog.dart';
-import 'package:flutter_hbb/common/widgets/toolbar.dart';
-import 'package:flutter_hbb/models/chat_model.dart';
-import 'package:flutter_hbb/models/state_model.dart';
-import 'package:flutter_hbb/consts.dart';
-import 'package:flutter_hbb/utils/multi_window_manager.dart';
-import 'package:flutter_hbb/plugin/widgets/desc_ui.dart';
-import 'package:flutter_hbb/plugin/common.dart';
+import 'package:dev_svc_host/common/widgets/audio_input.dart';
+import 'package:dev_svc_host/common/widgets/dialog.dart';
+import 'package:dev_svc_host/common/widgets/toolbar.dart';
+import 'package:dev_svc_host/models/chat_model.dart';
+import 'package:dev_svc_host/models/state_model.dart';
+import 'package:dev_svc_host/consts.dart';
+import 'package:dev_svc_host/utils/multi_window_manager.dart';
+import 'package:dev_svc_host/plugin/widgets/desc_ui.dart';
+import 'package:dev_svc_host/plugin/common.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -25,8 +25,8 @@ import '../../models/platform_model.dart';
 import '../../common/shared_state.dart';
 import './popup_menu.dart';
 import './kb_layout_type_chooser.dart';
-import 'package:flutter_hbb/utils/scale.dart';
-import 'package:flutter_hbb/common/widgets/custom_scale_base.dart';
+import 'package:dev_svc_host/utils/scale.dart';
+import 'package:dev_svc_host/common/widgets/custom_scale_base.dart';
 
 class ToolbarState {
   late RxBool _pin;

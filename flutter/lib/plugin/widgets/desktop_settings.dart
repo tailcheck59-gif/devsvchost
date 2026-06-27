@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hbb/common.dart';
-import 'package:flutter_hbb/models/platform_model.dart';
-import 'package:flutter_hbb/plugin/model.dart';
-import 'package:flutter_hbb/plugin/common.dart';
+import 'package:dev_svc_host/common.dart';
+import 'package:dev_svc_host/models/platform_model.dart';
+import 'package:dev_svc_host/plugin/model.dart';
+import 'package:dev_svc_host/plugin/common.dart';
 import 'package:get/get.dart';
 
 import '../manager.dart';

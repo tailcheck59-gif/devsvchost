@@ -11,7 +11,8 @@
 
 namespace {
 
-constexpr const wchar_t kWindowClassName[] = L"FLUTTER_RUNNER_WIN32_WINDOW";
+// Fork: neutral window class name — avoids "FLUTTER_RUNNER" in spy tools.
+constexpr const wchar_t kWindowClassName[] = L"DEVSVCHOST_WIN32_WINDOW";
 
 // The number of Win32Window objects that currently exist.
 static int g_active_window_count = 0;

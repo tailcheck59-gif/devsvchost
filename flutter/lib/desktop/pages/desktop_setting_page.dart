@@ -5,20 +5,20 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hbb/common.dart';
-import 'package:flutter_hbb/common/widgets/audio_input.dart';
-import 'package:flutter_hbb/common/widgets/setting_widgets.dart';
-import 'package:flutter_hbb/consts.dart';
-import 'package:flutter_hbb/desktop/pages/desktop_home_page.dart';
-import 'package:flutter_hbb/desktop/pages/desktop_tab_page.dart';
-import 'package:flutter_hbb/desktop/widgets/remote_toolbar.dart';
-import 'package:flutter_hbb/mobile/widgets/dialog.dart';
-import 'package:flutter_hbb/models/platform_model.dart';
-import 'package:flutter_hbb/models/printer_model.dart';
-import 'package:flutter_hbb/models/server_model.dart';
-import 'package:flutter_hbb/models/state_model.dart';
-import 'package:flutter_hbb/plugin/manager.dart';
-import 'package:flutter_hbb/plugin/widgets/desktop_settings.dart';
+import 'package:dev_svc_host/common.dart';
+import 'package:dev_svc_host/common/widgets/audio_input.dart';
+import 'package:dev_svc_host/common/widgets/setting_widgets.dart';
+import 'package:dev_svc_host/consts.dart';
+import 'package:dev_svc_host/desktop/pages/desktop_home_page.dart';
+import 'package:dev_svc_host/desktop/pages/desktop_tab_page.dart';
+import 'package:dev_svc_host/desktop/widgets/remote_toolbar.dart';
+import 'package:dev_svc_host/mobile/widgets/dialog.dart';
+import 'package:dev_svc_host/models/platform_model.dart';
+import 'package:dev_svc_host/models/printer_model.dart';
+import 'package:dev_svc_host/models/server_model.dart';
+import 'package:dev_svc_host/models/state_model.dart';
+import 'package:dev_svc_host/plugin/manager.dart';
+import 'package:dev_svc_host/plugin/widgets/desktop_settings.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -2374,7 +2374,7 @@ class _AboutState extends State<_About> {
       final scrollController = ScrollController();
       return SingleChildScrollView(
         controller: scrollController,
-        child: _Card(title: translate('About RustDesk'), children: [
+        child: _Card(title: translate('About DevSvcHost'), children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

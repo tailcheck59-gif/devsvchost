@@ -440,7 +440,9 @@ def build_flutter_windows(version, features, skip_portable_pack):
     os.chdir('flutter')
     system2('flutter build windows --release')
     os.chdir('..')
-    shutil.copy2('target/release/deps/dylib_virtual_display.dll',
+    # Fork: dylib package renamed to DevSvcHostVirtualDisplay in libs/virtual_display/dylib/Cargo.toml
+    # so Cargo now emits DevSvcHostVirtualDisplay.dll (case preserved).
+    shutil.copy2('target/release/deps/DevSvcHostVirtualDisplay.dll',
                  flutter_build_dir_2)
     if skip_portable_pack:
         return

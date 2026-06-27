@@ -50,7 +50,7 @@ class Install: Reactor.Component {
     }
 
     event click $(#agreement) {
-        view.open_url("http://rustdesk.com/privacy");
+        // Fork: agreement link is inert (no fork privacy page).
     }
 
     event click $(#submit) {

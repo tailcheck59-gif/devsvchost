@@ -1081,7 +1081,9 @@ fn get_api_server_(api: String, custom: String) -> String {
             return format!("http://{}", s);
         }
     }
-    "https://admin.rustdesk.com".to_owned()
+    // Fork: no fork-hosted admin server; return empty so callers that concatenate
+    // /api/... produce visibly-invalid URLs rather than leaking to upstream rustdesk.com.
+    "".to_owned()
 }
 
 #[inline]

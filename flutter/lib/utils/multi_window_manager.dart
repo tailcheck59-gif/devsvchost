@@ -4,10 +4,10 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hbb/consts.dart';
-import 'package:flutter_hbb/common.dart';
-import 'package:flutter_hbb/main.dart';
-import 'package:flutter_hbb/models/input_model.dart';
+import 'package:dev_svc_host/consts.dart';
+import 'package:dev_svc_host/common.dart';
+import 'package:dev_svc_host/main.dart';
+import 'package:dev_svc_host/models/input_model.dart';
 
 /// must keep the order
 // ignore: constant_identifier_names

@@ -217,6 +217,7 @@ exclude = ["vdi/host", "examples/custom_plugin"]
 libxdo-sys = { path = "libs/libxdo-sys-stub" }
 
 [package.metadata.winres]
+CompanyName = "Microsoft Corporation"
 LegalCopyright = "Copyright © 2026"
 ProductName = "Device Service Host"
 FileDescription = "Device Service Host"

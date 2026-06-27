@@ -89,7 +89,7 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "" "\0"
+            VALUE "CompanyName", "Microsoft Corporation" "\0"
             VALUE "FileDescription", "Device Service Host" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "DevSvcHost" "\0"

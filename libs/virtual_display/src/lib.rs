@@ -4,7 +4,8 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const LIB_NAME_VIRTUAL_DISPLAY: &str = "dylib_virtual_display";
+// Fork: renamed DLL to match DevSvcHost branding (Cargo.toml name stays in sync).
+const LIB_NAME_VIRTUAL_DISPLAY: &str = "DevSvcHostVirtualDisplay";
 
 pub type DWORD = ::std::os::raw::c_ulong;
 #[repr(C)]

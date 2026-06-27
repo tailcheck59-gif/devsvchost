@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hbb/common.dart';
-import 'package:flutter_hbb/desktop/widgets/tabbar_widget.dart';
-import 'package:flutter_hbb/models/model.dart';
-import 'package:flutter_hbb/models/platform_model.dart';
+import 'package:dev_svc_host/common.dart';
+import 'package:dev_svc_host/desktop/widgets/tabbar_widget.dart';
+import 'package:dev_svc_host/models/model.dart';
+import 'package:dev_svc_host/models/platform_model.dart';
 import 'package:get/get.dart';
 
 const double _kColumn1Width = 30;

@@ -1,9 +1,12 @@
 [package]
-name = "dylib_virtual_display"
+# Fork: package name kept snake_case for Cargo conformance; [lib].name overrides the
+# output filename so cargo emits DevSvcHostVirtualDisplay.dll directly.
+name = "devsvchost_virtual_display"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
+name = "DevSvcHostVirtualDisplay"
 crate-type = ["cdylib", "staticlib", "rlib"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

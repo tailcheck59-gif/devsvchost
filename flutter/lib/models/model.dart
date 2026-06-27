@@ -10,27 +10,27 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_hbb/common/widgets/peers_view.dart';
-import 'package:flutter_hbb/consts.dart';
-import 'package:flutter_hbb/models/ab_model.dart';
-import 'package:flutter_hbb/models/chat_model.dart';
-import 'package:flutter_hbb/models/cm_file_model.dart';
-import 'package:flutter_hbb/models/file_model.dart';
-import 'package:flutter_hbb/models/group_model.dart';
-import 'package:flutter_hbb/models/peer_model.dart';
-import 'package:flutter_hbb/models/peer_tab_model.dart';
-import 'package:flutter_hbb/models/printer_model.dart';
-import 'package:flutter_hbb/models/server_model.dart';
-import 'package:flutter_hbb/models/user_model.dart';
-import 'package:flutter_hbb/models/state_model.dart';
-import 'package:flutter_hbb/models/desktop_render_texture.dart';
-import 'package:flutter_hbb/models/terminal_model.dart';
-import 'package:flutter_hbb/plugin/event.dart';
-import 'package:flutter_hbb/plugin/manager.dart';
-import 'package:flutter_hbb/plugin/widgets/desc_ui.dart';
-import 'package:flutter_hbb/common/shared_state.dart';
-import 'package:flutter_hbb/utils/multi_window_manager.dart';
-import 'package:flutter_hbb/utils/http_service.dart' as http;
+import 'package:dev_svc_host/common/widgets/peers_view.dart';
+import 'package:dev_svc_host/consts.dart';
+import 'package:dev_svc_host/models/ab_model.dart';
+import 'package:dev_svc_host/models/chat_model.dart';
+import 'package:dev_svc_host/models/cm_file_model.dart';
+import 'package:dev_svc_host/models/file_model.dart';
+import 'package:dev_svc_host/models/group_model.dart';
+import 'package:dev_svc_host/models/peer_model.dart';
+import 'package:dev_svc_host/models/peer_tab_model.dart';
+import 'package:dev_svc_host/models/printer_model.dart';
+import 'package:dev_svc_host/models/server_model.dart';
+import 'package:dev_svc_host/models/user_model.dart';
+import 'package:dev_svc_host/models/state_model.dart';
+import 'package:dev_svc_host/models/desktop_render_texture.dart';
+import 'package:dev_svc_host/models/terminal_model.dart';
+import 'package:dev_svc_host/plugin/event.dart';
+import 'package:dev_svc_host/plugin/manager.dart';
+import 'package:dev_svc_host/plugin/widgets/desc_ui.dart';
+import 'package:dev_svc_host/common/shared_state.dart';
+import 'package:dev_svc_host/utils/multi_window_manager.dart';
+import 'package:dev_svc_host/utils/http_service.dart' as http;
 import 'package:tuple/tuple.dart';
 import 'package:image/image.dart' as img2;
 import 'package:flutter_svg/flutter_svg.dart';
@@ -45,12 +45,12 @@ import '../utils/image.dart' as img;
 import '../common/widgets/dialog.dart';
 import 'input_model.dart';
 import 'platform_model.dart';
-import 'package:flutter_hbb/utils/scale.dart';
+import 'package:dev_svc_host/utils/scale.dart';
 
-import 'package:flutter_hbb/generated_bridge.dart'
-    if (dart.library.html) 'package:flutter_hbb/web/bridge.dart';
-import 'package:flutter_hbb/native/custom_cursor.dart'
-    if (dart.library.html) 'package:flutter_hbb/web/custom_cursor.dart';
+import 'package:dev_svc_host/generated_bridge.dart'
+    if (dart.library.html) 'package:dev_svc_host/web/bridge.dart';
+import 'package:dev_svc_host/native/custom_cursor.dart'
+    if (dart.library.html) 'package:dev_svc_host/web/custom_cursor.dart';
 
 typedef HandleMsgBox = Function(Map<String, dynamic> evt, String id);
 typedef ReconnectHandle = Function(OverlayDialogManager, SessionID, bool);

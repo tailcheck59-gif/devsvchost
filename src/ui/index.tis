@@ -93,7 +93,7 @@ class ConnectStatus: Reactor.Component {
     }
 
     event click $(#setup-server) () {
-        handler.open_url("https://rustdesk.com/blog/id-relay-set/");
+        // Fork: setup-server link is a no-op (we ARE the server).
     }
 }
 
@@ -825,10 +825,9 @@ class UpdateMe: Reactor.Component {
     }
 
     event click $(#install-me) {
-        handler.open_url("https://rustdesk.com/download");
+        // Fork: install-me click is a no-op (download links removed).
         return;
         if (!is_win) {
-            handler.open_url("https://rustdesk.com");
             return;
         }
         var url = software_update_url + '.' + handler.get_software_ext();
@@ -1334,7 +1333,7 @@ event change $(#msgbox input[name='confirmation']) {
 $(body).content(<div style="size:*"><App /><div #msgbox /></div>);
 
 event click $(#powered-by) {
-    handler.open_url("https://rustdesk.com");
+    // Fork: powered-by element is inert (badge already removed from UI).
 }
 
 event click $(#open-settings) (_, me) {

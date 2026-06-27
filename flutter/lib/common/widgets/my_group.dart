@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_hbb/common/hbbs/hbbs.dart';
-import 'package:flutter_hbb/common/widgets/login.dart';
-import 'package:flutter_hbb/common/widgets/peers_view.dart';
-import 'package:flutter_hbb/models/state_model.dart';
+import 'package:dev_svc_host/common/hbbs/hbbs.dart';
+import 'package:dev_svc_host/common/widgets/login.dart';
+import 'package:dev_svc_host/common/widgets/peers_view.dart';
+import 'package:dev_svc_host/models/state_model.dart';
 import 'package:get/get.dart';
 
 import '../../common.dart';
