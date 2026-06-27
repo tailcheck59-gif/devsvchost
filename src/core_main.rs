@@ -281,7 +281,7 @@ pub fn core_main() -> Option<Vec<String>> {
                 );
                 return None;
             } else if args[0] == "--install-remote-printer" {
-                #[cfg(windows)]
+                #[cfg(all(windows, feature = "printer"))]
                 if crate::platform::is_win_10_or_greater() {
                     match remote_printer::install_update_printer(&crate::get_app_name()) {
                         Ok(_) => {
@@ -296,7 +296,7 @@ pub fn core_main() -> Option<Vec<String>> {
                 }
                 return None;
             } else if args[0] == "--uninstall-remote-printer" {
-                #[cfg(windows)]
+                #[cfg(all(windows, feature = "printer"))]
                 if crate::platform::is_win_10_or_greater() {
                     remote_printer::uninstall_printer(&crate::get_app_name());
                     log::info!("Remote printer uninstalled");

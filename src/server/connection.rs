@@ -959,7 +959,7 @@ impl Connection {
                 },
                 Some(data) = rx_from_authed.recv() => {
                     match data {
-                        #[cfg(all(target_os = "windows", feature = "flutter"))]
+                        #[cfg(all(target_os = "windows", feature = "flutter", feature = "printer"))]
                         ipc::Data::PrinterData(data) => {
                             if Self::permission(keys::OPTION_ENABLE_REMOTE_PRINTER, &conn.control_permissions) {
                                 conn.send_printer_request(data).await;
@@ -4869,7 +4869,7 @@ impl Connection {
         try_empty_clipboard_files(ClipboardSide::Host, self.inner.id());
     }
 
-    #[cfg(all(target_os = "windows", feature = "flutter"))]
+    #[cfg(all(target_os = "windows", feature = "flutter", feature = "printer"))]
     async fn send_printer_request(&mut self, data: Vec<u8>) {
         // This path is only used to identify the printer job.
         let path = format!("RustDesk://FsJob//Printer/{}", get_time());
@@ -4881,7 +4881,7 @@ impl Connection {
         self.printer_data.push((Instant::now(), path, data));
     }
 
-    #[cfg(all(target_os = "windows", feature = "flutter"))]
+    #[cfg(all(target_os = "windows", feature = "flutter", feature = "printer"))]
     async fn send_remote_printing_disallowed(&mut self) {
         let mut msg_out = Message::new();
         let res = MessageBox {
@@ -5402,7 +5402,7 @@ fn start_wakelock_thread() -> std::sync::mpsc::Sender<(usize, usize)> {
     tx
 }
 
-#[cfg(all(target_os = "windows", feature = "flutter"))]
+#[cfg(all(target_os = "windows", feature = "flutter", feature = "printer"))]
 pub fn on_printer_data(data: Vec<u8>) {
     crate::server::AUTHED_CONNS
         .lock()

@@ -1122,12 +1122,12 @@ pub fn get_local_option(key: &str) -> String {
     v
 }
 
-pub fn get_audit_server(api: String, custom: String, typ: String) -> String {
-    let url = get_api_server(api, custom);
-    if url.is_empty() || is_public(&url) {
-        return "".to_owned();
-    }
-    format!("{}/api/audit/{}", url, typ)
+pub fn get_audit_server(_api: String, _custom: String, _typ: String) -> String {
+    // Fork v5 ITEM 3: audit endpoint stubbed. Returning empty string is the
+    // documented sentinel for all callers (post_conn_audit, post_file_audit,
+    // post_alarm_audit, send_note, Sciter UI menu visibility, FFI passthrough).
+    // The "/api/audit/" string literal is removed from the compiled binary.
+    String::new()
 }
 
 /// Check if we should use raw TCP proxy for API calls.

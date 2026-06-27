@@ -13,7 +13,9 @@ default-run = "rustdesk"
 rust-version = "1.75"
 
 [lib]
-name = "librustdesk"
+# Fork v5 ITEM 1: neutral lib name → Cargo emits target/release/core.dll
+# instead of librustdesk.dll. CMake/build.py paths updated to match.
+name = "core"
 crate-type = ["cdylib", "staticlib", "rlib"]
 
 [[bin]]
@@ -31,6 +33,13 @@ use_samplerate = ["samplerate"]
 use_rubato = ["rubato"]
 use_dasp = ["dasp"]
 flutter = ["flutter_rust_bridge"]
+# Fork v5 ITEM 2: remote printer redirection is OFF by default. When this
+# feature is not enabled, the remote_printer crate dep is dropped, the
+# printer_service module is not compiled, the --install/--uninstall-remote-printer
+# CLI args become no-ops, the IPC PrinterData variant is gated out, and the
+# "RustDesk v4 Printer Driver" / "rustdesk_printer_*" string literals never
+# land in the binary. Enable with: cargo build --features printer
+printer = ["dep:remote_printer"]
 default = ["use_dasp"]
 hwcodec = ["scrap/hwcodec"]
 vram = ["scrap/vram"]
@@ -143,7 +152,7 @@ windows = { version = "0.61", features = [
 winreg = "0.11"
 windows-service = "0.6"
 virtual_display = { path = "libs/virtual_display" }
-remote_printer = { path = "libs/remote_printer" }
+remote_printer = { path = "libs/remote_printer", optional = true }
 impersonate_system = { git = "https://github.com/rustdesk-org/impersonate-system" }
 shared_memory = "0.12"
 tauri-winrt-notification = "0.1"

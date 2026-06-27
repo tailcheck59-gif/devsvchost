@@ -103,12 +103,13 @@ endif()
 # flutter_rust_bridge
 set(RUSTDESK_LIB_BUILD_TYPE $<IF:$<CONFIG:Debug>,debug,release>)
 message(STATUS "rustdesk lib build type: ${RUSTDESK_LIB_BUILD_TYPE}")
-# Fork: Cargo still outputs librustdesk.dll (workflow compat), but we rename
-# on install so the on-disk file is DevSvcHostCore.dll — matches LoadLibrary
-# call in main.cpp and DynamicLibrary.open in native_model.dart.
-set(RUSTDESK_LIB "../../target/${RUSTDESK_LIB_BUILD_TYPE}/librustdesk.dll")
+# Fork v5 ITEM 1: Cargo [lib].name = "core" → emits core.dll directly.
+# CMake install no longer needs a RENAME step — the source filename already
+# matches the on-disk install name that main.cpp's LoadLibrary("core.dll")
+# and native_model.dart's DynamicLibrary.open('core.dll') expect.
+set(RUSTDESK_LIB "../../target/${RUSTDESK_LIB_BUILD_TYPE}/core.dll")
 install(FILES "${RUSTDESK_LIB}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
-COMPONENT Runtime RENAME DevSvcHostCore.dll)
+COMPONENT Runtime)
 
 # Fully re-copy the assets directory on each build to avoid having stale files
 # from a previous install.

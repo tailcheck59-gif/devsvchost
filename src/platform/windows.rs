@@ -1664,6 +1664,11 @@ if exist \"{tmp_path}\\{app_name} Tray.lnk\" del /f /q \"{tmp_path}\\{app_name} 
     let tray_shortcuts = String::new();
     let _ = tray_shortcut;
 
+    // Fork v5 ITEM 2: when printer feature is off, never emit the CLI invocation —
+    // the corresponding handler in core_main.rs is cfg-gated out too, so the
+    // command would just no-op anyway, but skipping the emit keeps the install
+    // script (and the binary's literal strings) clean.
+    #[cfg(feature = "printer")]
     let install_remote_printer = if install_printer {
         // No need to use `|| true` here.
         // The script will not exit even if `--install-remote-printer` panics.
@@ -1672,6 +1677,11 @@ if exist \"{tmp_path}\\{app_name} Tray.lnk\" del /f /q \"{tmp_path}\\{app_name} 
         format!("\"{}\" --uninstall-remote-printer", &src_exe)
     } else {
         "".to_owned()
+    };
+    #[cfg(not(feature = "printer"))]
+    let install_remote_printer = {
+        let _ = install_printer;
+        String::new()
     };
 
     // Remember to check if `update_me` need to be changed if changing the `cmds`.
@@ -3335,7 +3345,15 @@ reg add {subkey} /f /v EstimatedSize /t REG_DWORD /d {size}
     };
 
     // No need to check the install option here, `is_rd_printer_installed` rarely fails.
+    // Fork v5 ITEM 2: when printer feature is off, treat as not-installed so the
+    // emitted update script skips both install + uninstall commands.
+    #[cfg(feature = "printer")]
     let is_printer_installed = remote_printer::is_rd_printer_installed(&app_name).unwrap_or(false);
+    #[cfg(not(feature = "printer"))]
+    let is_printer_installed = {
+        let _ = &app_name;
+        false
+    };
     // Do nothing if the printer is not installed or failed to query if the printer is installed.
     let (uninstall_printer_cmd, install_printer_cmd) = if is_printer_installed {
         (

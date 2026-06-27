@@ -74,7 +74,7 @@ mod service;
 mod video_qos;
 pub mod video_service;
 
-#[cfg(all(target_os = "windows", feature = "flutter"))]
+#[cfg(all(target_os = "windows", feature = "flutter", feature = "printer"))]
 pub mod printer_service;
 
 pub type Childs = Arc<Mutex<Vec<std::process::Child>>>;
@@ -140,7 +140,7 @@ pub fn new() -> ServerPtr {
             server.add_service(Box::new(input_service::new_window_focus()));
         }
     }
-    #[cfg(all(target_os = "windows", feature = "flutter"))]
+    #[cfg(all(target_os = "windows", feature = "flutter", feature = "printer"))]
     {
         match printer_service::init(&crate::get_app_name()) {
             Ok(()) => {

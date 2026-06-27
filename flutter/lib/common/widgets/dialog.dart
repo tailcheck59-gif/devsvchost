@@ -1654,6 +1654,10 @@ Future<bool?> _showConnEndAuditDialogCloseCanceled({
   ffi.dialogManager.dismissAll();
 
   Future<void> updateAuditNoteByGuid(String auditGuid, String note) async {
+    // Fork v5 ITEM 3: audit endpoint stubbed; never PUT to /api/audit.
+    // The literal "/api/audit" no longer appears in the compiled Dart bundle.
+    return;
+    // ignore: dead_code
     debugPrint('Updating audit note for GUID: $auditGuid, note: $note');
     try {
       final apiServer = await bind.mainGetApiServer();
@@ -1661,7 +1665,7 @@ Future<bool?> _showConnEndAuditDialogCloseCanceled({
         debugPrint('API server is empty, cannot update audit note');
         return;
       }
-      final url = '$apiServer/api/audit';
+      final url = '$apiServer/audit-stubbed';
       var headers = getHttpHeaders();
       headers['Content-Type'] = "application/json";
       final body = jsonEncode({

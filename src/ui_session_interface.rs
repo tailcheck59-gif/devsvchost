@@ -2053,6 +2053,10 @@ async fn start_one_port_forward<T: InvokeUiSession>(
 
 #[tokio::main(flavor = "current_thread")]
 async fn send_note(url: String, id: String, sid: u64, note: String) {
+    // Fork v5 ITEM 3: defense in depth — never POST to an empty audit URL.
+    if url.is_empty() {
+        return;
+    }
     let body = serde_json::json!({ "id": id, "session_id": sid, "note": note });
     allow_err!(crate::post_request(url, body.to_string(), "").await);
 }

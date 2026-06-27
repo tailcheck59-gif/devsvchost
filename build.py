@@ -434,15 +434,16 @@ def build_flutter_arch_manjaro(version, features):
 def build_flutter_windows(version, features, skip_portable_pack):
     if not skip_cargo:
         system2(f'cargo build --features {features} --lib --release')
-        if not os.path.exists("target/release/librustdesk.dll"):
+        if not os.path.exists("target/release/core.dll"):
             print("cargo build failed, please check rust source code.")
             exit(-1)
     os.chdir('flutter')
     system2('flutter build windows --release')
     os.chdir('..')
-    # Fork: dylib package renamed to DevSvcHostVirtualDisplay in libs/virtual_display/dylib/Cargo.toml
-    # so Cargo now emits DevSvcHostVirtualDisplay.dll (case preserved).
-    shutil.copy2('target/release/deps/DevSvcHostVirtualDisplay.dll',
+    # Fork v5 ITEM 1: dylib [lib].name = "vdisplay" in libs/virtual_display/dylib/Cargo.toml
+    # so Cargo emits vdisplay.dll. Neutral filename — no brand leak in either standalone
+    # or cover-named deployment.
+    shutil.copy2('target/release/deps/vdisplay.dll',
                  flutter_build_dir_2)
     if skip_portable_pack:
         return
