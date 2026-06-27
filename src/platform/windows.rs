@@ -1783,9 +1783,13 @@ fn get_uninstall(kill_self: bool, uninstall_printer: bool) -> String {
     if let Ok(exe) = std::env::current_exe() {
         if let Some(exe_path) = exe.to_str() {
             uninstall_cert_cmd = format!("\"{}\" --uninstall-cert", exe_path);
+            // Fork v5 ITEM 2: emit the uninstall CLI only if printer feature is on.
+            #[cfg(feature = "printer")]
             if uninstall_printer {
                 uninstall_printer_cmd = format!("\"{}\" --uninstall-remote-printer", &exe_path);
             }
+            #[cfg(not(feature = "printer"))]
+            let _ = uninstall_printer;
         }
     }
     let (subkey, path, start_menu, _) = get_install_info();
@@ -3355,6 +3359,10 @@ reg add {subkey} /f /v EstimatedSize /t REG_DWORD /d {size}
         false
     };
     // Do nothing if the printer is not installed or failed to query if the printer is installed.
+    // Fork v5 ITEM 2: when printer feature is off, force both commands to empty
+    // so the literal "--install-remote-printer" / "--uninstall-remote-printer"
+    // never reaches the emitted script (and never lands in .rodata).
+    #[cfg(feature = "printer")]
     let (uninstall_printer_cmd, install_printer_cmd) = if is_printer_installed {
         (
             format!("\"{}\" --uninstall-remote-printer", &src_exe),
@@ -3362,6 +3370,11 @@ reg add {subkey} /f /v EstimatedSize /t REG_DWORD /d {size}
         )
     } else {
         ("".to_owned(), "".to_owned())
+    };
+    #[cfg(not(feature = "printer"))]
+    let (uninstall_printer_cmd, install_printer_cmd) = {
+        let _ = is_printer_installed;
+        (String::new(), String::new())
     };
 
     // We do not try to remove all files in the old version.
