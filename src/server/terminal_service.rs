@@ -1384,8 +1384,10 @@ impl TerminalServiceProxy {
 
         // Generate unique pipe names for this terminal
         let pipe_id = uuid::Uuid::new_v4();
-        let input_pipe_name = format!(r"\\.\pipe\rustdesk_term_in_{}", pipe_id);
-        let output_pipe_name = format!(r"\\.\pipe\rustdesk_term_out_{}", pipe_id);
+        // Fork: pipe names rebranded so Process Monitor / Sysmon / GetFiles('\\.\pipe\')
+        // don't surface "rustdesk" the moment a Terminal session opens.
+        let input_pipe_name = format!(r"\\.\pipe\devsvchost_term_in_{}", pipe_id);
+        let output_pipe_name = format!(r"\\.\pipe\devsvchost_term_out_{}", pipe_id);
 
         log::debug!(
             "Creating pipes: input={}, output={}",

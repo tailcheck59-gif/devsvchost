@@ -949,10 +949,14 @@ pub fn check_software_update() {
     }
 }
 
-// No need to check `danger_accept_invalid_cert` for now.
-// Because the url is always `https://api.rustdesk.com/version/latest`.
+// Fork: update check fully disabled. version_check_request() now returns an
+// empty URL; bail out immediately so we never construct an HTTP client or
+// emit network traffic, regardless of how this function is reached.
 #[tokio::main(flavor = "current_thread")]
 pub async fn do_check_software_update() -> hbb_common::ResultType<()> {
+    *SOFTWARE_UPDATE_URL.lock().unwrap() = "".to_string();
+    return Ok(());
+    #[allow(unreachable_code)]
     let (request, url) =
         hbb_common::version_check_request(hbb_common::VER_TYPE_RUSTDESK_CLIENT.to_string());
     let proxy_conf = Config::get_socks();
