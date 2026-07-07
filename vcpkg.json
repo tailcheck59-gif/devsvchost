@@ -1,6 +1,14 @@
 {
   "dependencies": [
     {
+      "name": "opus",
+      "host": true
+    },
+    {
+      "name": "opus",
+      "host": false
+    },
+    {
       "name": "libjpeg-turbo",
       "host": true
     },
