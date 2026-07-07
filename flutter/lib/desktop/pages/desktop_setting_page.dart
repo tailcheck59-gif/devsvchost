@@ -1312,7 +1312,7 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
                       ),
                     ).marginOnly(right: 8),
                     Text(
-                      'HVNC Status: ${hvncStatus.value.toUpperCase()}',
+                      'HVNC Status: ${hvncStatus.value}',
                       style: TextStyle(fontSize: 13),
                     ),
                   ],
