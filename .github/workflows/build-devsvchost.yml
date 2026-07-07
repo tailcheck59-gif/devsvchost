@@ -34,6 +34,13 @@ jobs:
         with:
           version: '15.0.6'
 
+      - name: Setup vcpkg with GitHub Actions binary cache
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: C:\vcpkg
+          vcpkgGitCommitId: '120deac3062162151622ca4860575a33844ba10b'
+          doNotCache: false
+
       - name: Install bridge dependencies
         run: |
           cargo install cargo-expand --version 1.0.95 --locked
@@ -45,6 +52,12 @@ jobs:
           flutter pub get
           cd ..
           flutter_rust_bridge_codegen --rust-input ./src/flutter_ffi.rs --dart-output ./flutter/lib/generated_bridge.dart
+
+      - name: Install vcpkg dependencies
+        env:
+          VCPKG_DEFAULT_HOST_TRIPLET: x64-windows-static
+        run: |
+          C:\vcpkg\vcpkg install opus portaudio ffmpeg
 
       - name: Build Rust backend
         run: |
