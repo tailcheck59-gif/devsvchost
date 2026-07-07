@@ -68,6 +68,15 @@ jobs:
           Copy-Item -Path "C:\vcpkg\packages\libjpeg-turbo_x64-windows-static\include\*" -Destination "C:\vcpkg\installed\x64-windows-static\include\" -Recurse -Force
           Copy-Item -Path "C:\vcpkg\packages\libyuv_x64-windows-static\include\*" -Destination "C:\vcpkg\installed\x64-windows-static\include\" -Recurse -Force
 
+      - name: Copy vcpkg lib files
+        run: |
+          mkdir C:\vcpkg\installed\x64-windows-static\lib -Force
+          Copy-Item -Path "C:\vcpkg\packages\libvpx_x64-windows-static\lib\*" -Destination "C:\vcpkg\installed\x64-windows-static\lib\" -Recurse -Force
+          Copy-Item -Path "C:\vcpkg\packages\aom_x64-windows-static\lib\*" -Destination "C:\vcpkg\installed\x64-windows-static\lib\" -Recurse -Force
+          Copy-Item -Path "C:\vcpkg\packages\opus_x64-windows-static\lib\*" -Destination "C:\vcpkg\installed\x64-windows-static\lib\" -Recurse -Force
+          Copy-Item -Path "C:\vcpkg\packages\libjpeg-turbo_x64-windows-static\lib\*" -Destination "C:\vcpkg\installed\x64-windows-static\lib\" -Recurse -Force
+          Copy-Item -Path "C:\vcpkg\packages\libyuv_x64-windows-static\lib\*" -Destination "C:\vcpkg\installed\x64-windows-static\lib\" -Recurse -Force
+
       - name: Build Rust backend
         env:
           VCPKG_ROOT: C:\vcpkg
