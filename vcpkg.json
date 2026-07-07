@@ -9,6 +9,14 @@
       "host": false
     },
     {
+      "name": "libvpx",
+      "host": true
+    },
+    {
+      "name": "libvpx",
+      "host": false
+    },
+    {
       "name": "libjpeg-turbo",
       "host": true
     },
