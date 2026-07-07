@@ -57,7 +57,7 @@ jobs:
         env:
           VCPKG_DEFAULT_HOST_TRIPLET: x64-windows-static
         run: |
-          C:\vcpkg\vcpkg install opus portaudio ffmpeg
+          C:\vcpkg\vcpkg install
 
       - name: Build Rust backend
         run: |
