@@ -1,0 +1,37 @@
+name: Build DevSvcHost Windows
+
+on:
+  push:
+    branches: [ devsvchost ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-pc-windows-msvc
+          
+      - name: Build Flutter Windows Release
+        run: |
+          flutter config --enable-windows-desktop
+          flutter build windows --release
+          
+      - name: Upload Windows executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: devsvchost-windows
+          path: build/windows/x64/runner/Release/
+          retention-days: 7
