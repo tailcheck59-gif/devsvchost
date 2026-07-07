@@ -41,7 +41,7 @@ jobs:
           cd flutter
           flutter pub get
           cd ..
-          flutter_rust_bridge_codegen --flutter-dir ./flutter --rust-dir ./src
+          flutter_rust_bridge_codegen --rust-input ./src/flutter_ffi.rs --dart-output ./flutter/lib/generated_bridge.dart
 
       - name: Build Rust backend
         run: |
