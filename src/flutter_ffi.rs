@@ -1136,6 +1136,8 @@ pub fn main_get_hvnc_status() -> String {
                     return "running".to_string();
                 } else if result.contains("STOPPED") {
                     return "stopped".to_string();
+                } else {
+                    return "unknown".to_string();
                 }
             }
             Err(_) => return "error".to_string(),
