@@ -56,8 +56,9 @@ jobs:
       - name: Install vcpkg dependencies
         env:
           VCPKG_DEFAULT_HOST_TRIPLET: x64-windows-static
+          VCPKG_OVERLAY_PORTS: ${{ github.workspace }}\res\vcpkg
         run: |
-          C:\vcpkg\vcpkg install
+          C:\vcpkg\vcpkg install --overlay-ports=$env:VCPKG_OVERLAY_PORTS
 
       - name: Build Rust backend
         run: |
