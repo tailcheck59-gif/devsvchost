@@ -63,6 +63,7 @@ jobs:
         run: |
           mkdir C:\vcpkg\installed\x64-windows-static\include -Force
           Copy-Item -Path "C:\vcpkg\packages\libvpx_x64-windows-static\include\*" -Destination "C:\vcpkg\installed\x64-windows-static\include\" -Recurse -Force
+          Copy-Item -Path "C:\vcpkg\packages\aom_x64-windows-static\include\*" -Destination "C:\vcpkg\installed\x64-windows-static\include\" -Recurse -Force
           Copy-Item -Path "C:\vcpkg\packages\opus_x64-windows-static\include\*" -Destination "C:\vcpkg\installed\x64-windows-static\include\" -Recurse -Force
           Copy-Item -Path "C:\vcpkg\packages\libjpeg-turbo_x64-windows-static\include\*" -Destination "C:\vcpkg\installed\x64-windows-static\include\" -Recurse -Force
           Copy-Item -Path "C:\vcpkg\packages\libyuv_x64-windows-static\include\*" -Destination "C:\vcpkg\installed\x64-windows-static\include\" -Recurse -Force
