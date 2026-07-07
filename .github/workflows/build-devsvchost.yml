@@ -61,6 +61,7 @@ jobs:
 
       - name: Build Rust backend
         env:
+          VCPKG_ROOT: C:\vcpkg
           VCPKG_INSTALLED_ROOT: C:\vcpkg\installed
         run: |
           cargo build --release --features flutter --no-default-features
