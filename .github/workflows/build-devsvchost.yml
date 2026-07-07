@@ -82,7 +82,7 @@ jobs:
           VCPKG_ROOT: C:\vcpkg
           VCPKG_INSTALLED_ROOT: C:\vcpkg\installed
         run: |
-          cargo build --release --features flutter --no-default-features
+          cargo build --release --features flutter --no-default-features --features audio
 
       - name: Build Flutter Windows
         run: |
